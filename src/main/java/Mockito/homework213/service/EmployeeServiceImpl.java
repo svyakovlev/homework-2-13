@@ -51,35 +51,4 @@ public class EmployeeServiceImpl implements EmployeeService {
         return Collections.unmodifiableList(employeeList);
     }
 
-    @Override
-    public Employee maxSalaryInDept(int departmentId) {
-        return employeeList.stream()
-                .filter(e -> e.getDepartment() == departmentId)
-                .max(Comparator.comparing(Employee::getSalary))
-                .get();
-    }
-
-    @Override
-    public Employee minSalaryInDept(int departmentId) {
-        return employeeList.stream()
-                .filter(e -> e.getDepartment() == departmentId)
-                .min(Comparator.comparing(Employee::getSalary))
-                .get();
-    }
-
-    @Override
-    public List<String> allEmployeesInDept(int departmentId) {
-        return employeeList.stream()
-                .filter(e -> e.getDepartment() == departmentId)
-                .map(e -> e.getFirstName() + " " + e.getLastName())
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<String> allEmployeesSortByDept() {
-        return Collections.unmodifiableList(employeeList).stream()
-                .sorted(Comparator.comparingInt(Employee::getDepartment))
-                .map(e -> e.getFirstName() + " " + e.getLastName())
-                .collect(Collectors.toList());
-    }
 }

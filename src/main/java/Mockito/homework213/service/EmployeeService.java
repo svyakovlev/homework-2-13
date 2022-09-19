@@ -14,11 +14,4 @@ public interface EmployeeService {
 
     Collection<Employee> findAll();
 
-    Employee maxSalaryInDept(int department);
-
-    Employee minSalaryInDept(int departmentId);
-
-    List<String> allEmployeesInDept(int departmentId);
-
-    List<String> allEmployeesSortByDept();
 }

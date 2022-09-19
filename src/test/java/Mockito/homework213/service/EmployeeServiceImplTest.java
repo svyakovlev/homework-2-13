@@ -6,77 +6,72 @@ import Mockito.homework213.model.Employee;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import static Mockito.homework213.service.TestConstant.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EmployeeServiceImplTest {
 
-    private String firstName = "Иван";
-    private String lastName = "Иванов";
-    private int department = 1;
-    private double salary = 35_000;
-    private Employee employee1 = new Employee(firstName, lastName, department, salary);
-    private Employee employee2 = new Employee("Иван", "Петров", 1, 40_000);
-    private Employee employee3 = new Employee("Иван", "Сидоров", 2, 20_000);
-
-
-    private List<Employee> employeeList = new ArrayList<>();
-
-    private EmployeeService employeeService = new EmployeeServiceImpl();
+    private EmployeeService out = new EmployeeServiceImpl();
 
     @Test
-    public void addTest() {
-        Employee actual = employeeService.add(firstName, lastName, department, salary);
-        Assertions.assertEquals(employee1,actual);
+    public void shouldAddEmployeeWhenTheyDontExist() {
+        Employee expected = new Employee(FIRST_NAME, LAST_NAME, DEPT, SALARY);
+        assertEquals(0, out.findAll().size());
+        assertFalse(out.findAll().contains(expected));
+
+        Employee actual = out.add(FIRST_NAME, LAST_NAME, DEPT, SALARY);
+        assertEquals(expected, actual);
+        assertEquals(1, out.findAll().size());
+        assertTrue(out.findAll().contains(expected));
     }
 
     @Test
-    public void shouldReturnExceptionWhenEmployeeAlreadyAdded() {
-        employeeList.add(employee1);
-        Assertions.assertThrows(EmployeeAlreadyAddedException.class, () -> employeeList.add(employee1));
-    }
-
-    @Test
-    public void removeTest() {
-        employeeList.add(employee1);
-        Employee actual = employeeService.remove(firstName, lastName, department, salary);
-        Assertions.assertEquals(employee1,actual);
-    }
-
-    @Test
-    public void shouldReturnExceptionWhenEmployeeNotFoundWhenRemove() {
-        Assertions.assertThrows(EmployeeNotFoundException.class, () -> employeeList.remove(employee1));
+    public void shouldReturnEmployeeAllreadyAddedException() {
+        Employee existed = out.add(FIRST_NAME, LAST_NAME, DEPT, SALARY);
+        assertTrue(out.findAll().contains(existed));
+        assertThrows(EmployeeAlreadyAddedException.class, () -> out.add(FIRST_NAME, LAST_NAME, DEPT, SALARY));
     }
 
     @Test
     public void findTest() {
-        employeeList.add(employee1);
-        Employee actual = employeeService.find(firstName, lastName, department, salary);
-        Assertions.assertEquals(employee1,actual);
+        Employee existed = out.add(FIRST_NAME, LAST_NAME, DEPT, SALARY);
+        assertEquals(existed, out.find(FIRST_NAME, LAST_NAME, DEPT, SALARY));
     }
 
     @Test
-    public void shouldReturnExceptionWhenEmployeeNotFound() {
-        Assertions.assertThrows(EmployeeNotFoundException.class, () -> employeeService.find(firstName, lastName,department,salary));
+    public void shouldReturnEmployeeNotFoundException() {
+        assertEquals(0, out.findAll().size());
+        assertThrows(EmployeeNotFoundException.class, () -> out.find(FIRST_NAME, LAST_NAME, DEPT, SALARY));
     }
 
     @Test
-    public void maxSalaryInDeptTest() {
-        employeeService.add("Иван", "Иванов", 1, 35_000);
-        employeeService.add("Иван", "Петров", 1, 40_000);
-        employeeService.add("Иван", "Сидоров", 2, 20_000);
+    public void removeTest() {
+        Employee expected = out.add(FIRST_NAME, LAST_NAME, DEPT, SALARY);
+        assertEquals(1, out.findAll().size());
+        assertTrue(out.findAll().contains(expected));
 
-        Employee actual = employeeService.maxSalaryInDept(1);
-        Assertions.assertEquals(employee2,actual);
+        Employee actual = out.remove(FIRST_NAME, LAST_NAME, DEPT, SALARY);
+        assertEquals(expected, actual);
+        assertTrue(out.findAll().isEmpty());
+        assertFalse(out.findAll().contains(expected));
     }
 
     @Test
-    public void minSalaryInDeptTest() {
-        employeeService.add("Иван", "Иванов", 1, 35_000);
-        employeeService.add("Иван", "Петров", 1, 40_000);
-        employeeService.add("Иван", "Сидоров", 2, 20_000);
-
-        Employee actual = employeeService.minSalaryInDept(1);
-        Assertions.assertEquals(employee1,actual);
+    public void shouldReturnEmployeeNotFoundExceptionWhenRemove() {
+        assertTrue(out.findAll().isEmpty());
+        assertThrows(EmployeeNotFoundException.class, () -> out.remove(FIRST_NAME, LAST_NAME, DEPT, SALARY));
     }
+
+    @Test
+    public void findAllTest() {
+        Employee employee = out.add(FIRST_NAME, LAST_NAME, DEPT, SALARY);
+        Employee employee2 = out.add(FIRST_NAME2, LAST_NAME2, DEPT, SALARY);
+        Collection<Employee> expected = List.of(employee, employee2);
+        Collection<Employee> actual = out.findAll();
+        assertIterableEquals(expected, actual);
+    }
+
 }
