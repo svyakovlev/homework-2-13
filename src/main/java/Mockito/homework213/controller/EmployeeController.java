@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import Mockito.homework213.model.Employee;
 import Mockito.homework213.service.EmployeeService;
+import Mockito.homework213.service.DepartmentService;
 
 import java.util.Collection;
 
@@ -15,9 +16,11 @@ import java.util.Collection;
 public class EmployeeController {
 
     private final EmployeeService service;
+    private final DepartmentService departmentService;
 
-    public EmployeeController(EmployeeService service) {
+    public EmployeeController(EmployeeService service, DepartmentService departmentService) {
         this.service = service;
+        this.departmentService = departmentService;
     }
 
     @GetMapping(path = "/add")
@@ -42,21 +45,21 @@ public class EmployeeController {
 
     @GetMapping(path = "/departments/max-salary")
     public Employee maxSalaryInDept(@RequestParam int departmentId) {
-        return service.maxSalaryInDept(departmentId);
+        return departmentService.maxSalaryInDept(departmentId);
     }
 
     @GetMapping(path = "/departments/min-salary")
     public Employee minSalaryInDept(@RequestParam int departmentId) {
-        return service.minSalaryInDept(departmentId);
+        return departmentService.minSalaryInDept(departmentId);
     }
 
     @GetMapping(value = "/departments/all", params = "departmentId")
     public Collection<String> allEmployeesInDept(@RequestParam (name = "departmentId") int departmentId) {
-        return service.allEmployeesInDept(departmentId);
+        return departmentService.allEmployeesInDept(departmentId);
     }
 
     @GetMapping(path = "/departments/all")
     public Collection<String> allEmployeesSortByDept() {
-        return service.allEmployeesSortByDept();
+        return departmentService.allEmployeesSortByDept();
     }
 }
